@@ -6,11 +6,20 @@ public class Recentquotes {
     private String author;
     private String text;
 
+//    private String author;
+//    private String text;
+
     // create constructor
     public Recentquotes(String author, String text) {
         this.author = author;
         this.text = text;
     }
+
+
+//    public Recentquotes(String author, String text) {
+//        this.author = author;
+//        this.text = text;
+//    }
 
     public String getAuthor() {
         return author;
@@ -28,4 +37,5 @@ public class Recentquotes {
                 ", text='" + text + '\'' +
                 '}';
     }
+
 }

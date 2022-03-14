@@ -5,21 +5,61 @@ package quotes;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
 
 public class App {
 
-    public static void main(String[] args) {
-        int rand = new Random().nextInt(137-0) + 0;
+    public static void main(String[] args) throws IOException {
 
-        ClassLoader classLoader = App.class.getClassLoader();
-        String path = classLoader.getResource("Recentquotes.json").getPath();
+        // prework build the JAVA objects that will hold the JSON data
+        // step  1 go to the internet and get the JSON data
+        // make a url for the API
+        URL qouteUrl = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
 
-        readFile(rand, path);
+        // making a connection to the API
+        HttpURLConnection quoteHttpURLConnection = (HttpURLConnection) qouteUrl.openConnection();
+
+        // specify the method for the connection
+        quoteHttpURLConnection.setRequestMethod("GET");
+
+        InputStreamReader qouteInputStreamReader = new InputStreamReader(quoteHttpURLConnection.getInputStream());
+
+        BufferedReader qouteBufferedReader = new BufferedReader(qouteInputStreamReader);
+        String qouteData = qouteBufferedReader.readLine();
+        System.out.println(qouteData);
+
+        // I got a help to the idea of the next 2 lines (using replace) from my classmate Ala' Alwazani
+        qouteData = qouteData.replace("quoteText", "text");
+        qouteData = qouteData.replace("quoteAuthor", "author");
+
+
+        Gson gson = new Gson();
+        Recentquotes myQute = gson.fromJson(qouteData, Recentquotes.class);
+        System.out.println(myQute);
+
+
+
+        // save the response from the API to a file
+        File qoutesFile = new File("app/src/main/resources/qoutes.json");
+        try (FileWriter qoutesFileWriter = new FileWriter(qoutesFile)) {
+            gson.toJson(myQute, qoutesFileWriter);
+
+        }catch(Exception exception )
+        {
+            int rand = new Random().nextInt(137-0) + 0;
+            ClassLoader classLoader = App.class.getClassLoader();
+            String path = classLoader.getResource("qoutes.json").getPath();
+
+            System.out.println(readFile(rand, path));
+        }
+
     }
+
+
 
     public static Recentquotes readFile(int num, String path) {
         BufferedReader br = null;
@@ -36,7 +76,7 @@ public class App {
             while ((strLine = file.readLine()) != null) {
 //                System.out.println(strLine);
                 Recentquotes[] arrayQuetes = gson.fromJson(file, Recentquotes[].class);
-
+                
 
 //                System.out.println(arrayQuetes.length);
                 newQute= arrayQuetes[num];

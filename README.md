@@ -13,6 +13,7 @@
 * How it work:
     * a random number generated and passed to function reafdFile that read the file of quets and then convert the json object and save them into array
     * it search about the rand number and in indecies of array and returns its contents 
+    * a random qoute printed to secreen from API 
 
 
 * to run the App:
